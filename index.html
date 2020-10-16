@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>A unified approach to inference on algorithm-agnostic variable importance</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Brian D. Williamson, PhD   Fred Hutchinson Cancer Research Center " />
+    <script src="index_files/header-attrs-2.4/header-attrs.js"></script>
+    <link href="index_files/font-awesome-5.3.1/css/fontawesome-all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, title-slide
+
+# A unified approach to inference on algorithm-agnostic variable importance
+### Brian D. Williamson, PhD<br> <span style="font-size: 75%;"> Fred Hutchinson Cancer Research Center </span>
+### 21 October 2020<br> <a href = 'https://bdwilliamson.github.io/#talks' style = 'color: white;'>https://bdwilliamson.github.io/#talks</a>
+
+---
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 22px
+}
+&lt;/style&gt;
+
+## Motivation
+
+&lt;img src="img/examples.png" width="1405" height="450px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Motivation
+
+In general: data `\(Z_1, \ldots, Z_n \stackrel{iid}{\sim} P_0\)`
+
+--
+
+* `\(Z_i := (X_i, Y_i);\)`
+
+--
+
+* `\(X_i \in \mathbb{R}^p\)` is a vector of covariates
+
+--
+
+* `\(Y_i \in \mathbb{R}\)` is the outcome of interest
+
+--
+
+* `\(s \subseteq \{1,\ldots,p\}\)`: index set
+
+--
+
+**Goal:** estimate the .green[importance] of `\(X_s\)` in predicting `\(Y\)`
+
+--
+
+**Question:** how do we define importance?
+
+---
+
+## Linear regression variable importance
+
+Objective: estimate the importance of `\(X_s\)`, `\(s \subseteq \{1, \ldots, p\}\)`
+
+How do we typically do this in linear regression?
+
+--
+
+* Fit a linear regression of `\(Y\)` on `\(X\)` `\(\rightarrow \color{cyan}{\hat{\mu}(X)}\)`
+
+--
+
+* Fit a linear regression of `\(Y\)` on `\(X_{-s}\)` `\(\rightarrow \color{cyan}{\hat{\mu}_s(X)}\)` 
+
+--
+
+* .green[Compare the fitted values] `\([\hat{\mu}(X_i), \hat{\mu}_s(X_i)]\)`
+
+--
+
+Many ways to compare fitted values, including:
+* ANOVA decomposition
+* Difference in `\(R^2\)` 
+
+---
+
+## Linear regression variable importance 
+
+Difference in `\(R^2\)`: `$$\left[1 - \frac{MSE(\hat{\mu})}{n^{-1}\sum_{i=1}^n\{Y_i - \overline{Y}_n\}^2}\right] - \left[1 - \frac{MSE(\hat{\mu}_s)}{n^{-1}\sum_{i=1}^n\{Y_i - \overline{Y}_n\}^2}\right]$$`
+
+Mean squared error (MSE) of a linear regression function `\(f\)`: `$$MSE(f) = \ \frac{1}{n}\sum_{i=1}^n \{Y_i - f(X_i)\}^2$$`
+
+Inference:
+
+* Test difference 
+
+--
+
+* Valid confidence interval
+
+---
+
+## Flexible estimator variable importance?
+
+&lt;img src="img/machine_learning_2x.png" width="370px" style="display: block; margin: auto;" /&gt;
+.small[source: https://xkcd.com/1838/]
+
+---
+
+## Flexible estimator variable importance?
+
+.pull-left[
+What if I want to fit a more flexible estimator?
+
+* better predictions?
+
+* how do I define importance?
+
+]
+
+.pull-right[
+&lt;img src="img/molnar_interpretable-ml.jpg" width="270px" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+## Types of variable importance
+
+Two predominant notions of variable importance:
+
+--
+
+* algorithm-level: explain a black box (.green[extrinsic])
+
+--
+
+* population-level: explain a population (.green[intrinsic])
+
+--
+
+Our focus: .blue1[statistical inference] on .blue2[interpretable] intrinsic measures
+
+---
+
+## Intrinsic importance
+
+What if we knew .blue2[$P_0$]?
+
+--
+
+Oracle prediction functions:
+* `\(\mu_0(x) := E_{P_0}(Y \mid X = x)\)`
+* `\(\mu_{0,s}(x) := E_{P_0}(Y \mid X_{-s} = x_{-s})\)`
+
+--
+
+Define population importance in terms of `\(\mu_0, \mu_{0,s}\)`!
+
+---
+
+## Intrinsic importance: ANOVA
+
+Defining importance in terms of `\(\mu_0, \mu_{0,s}\)`: `$$\text{ANOVA}_{0,s} := \frac{E_{P_0}\{\mu_0(X) - \mu_{0,s}(X)\}^2}{var_{P_0}(Y)}$$`
+
+Large `\(\text{ANOVA}_{0,s} \rightarrow\)` `\(X_s\)` important relative to `\(X_{-s}\)`
+
+---
+
+## Population ANOVA: estimation
+
+Idea:
+
+* `\(\mu_n \leftarrow\)` estimate `\(\mu_0\)`
+
+--
+
+* `\(\mu_{n,s} \leftarrow\)` estimate `\(\mu_{0,s}\)`
+
+--
+
+* `\(\sigma^2_n \leftarrow\)` empirical variance of `\(Y\)` 
+
+--
+
+* plug in: `$$\text{ANOVA}_{n,s} = \frac{\frac{1}{n}\sum_{i=1}^n \{\mu_n(X_i) - \mu_{n,s}(X_i)\}^2}{\sigma^2_n}$$`
+
+--
+
+This estimator .red[requires correction]! 
+
+---
+
+## Population ANOVA: corrected estimator
+
+Debiasing: use the efficient influence function (EIF) `\(\phi_{0,s}\)` 
+
+`$$\text{ANOVA}_{n,s} := \ \frac{\frac{1}{n}\sum_{i=1}^n \{\mu_n(X_i) - \mu_{n,s}(X_i)\}^2}{\sigma^2_n} + \frac{1}{n}\sum_{i=1}^n \phi_{0,s}(X_i)$$`
+
+--
+
+Explicit form:
+
+`$$\text{ANOVA}_{n,s} = \left[1 - \frac{\frac{1}{n}\sum_{i=1}^n \{Y_i - \mu_n(X_i)\}^2}{\sigma^2_n}\right] - \left[1 - \frac{\frac{1}{n}\sum_{i=1}^n \{Y_i - \mu_{n,s}(X_i)\}^2}{\sigma^2_n}\right]$$`
+
+--
+
+Corrected estimator: .blue1[difference in R-squared]!
+
+---
+
+## Population R-squared
+
+`\(MSE(\mu, P_0) := E_{P_0}\{Y - \mu(X)\}^2\)`
+
+`\(R^2(\mu, P_0) := 1 - \frac{MSE(\mu, P_0)}{var_{P_0}(Y)}\)`
+
+`\(DR^2_{0,s} := R^2(\mu_0, P_0) - R^2(\mu_{0,s}, P_0)\)`
+
+--
+
+Equivalent to ANOVA decomposition .blue2[in the population]
+
+--
+
+Simple estimator does not require correction
+
+---
+
+## ANOVA (naive vs corrected)
+
+&lt;img src="img/anova_naive-vs-corrected_bias.png" width="370px" /&gt;&lt;img src="img/anova_naive-vs-corrected_cover.png" width="370px" /&gt;
+
+---
+
+## R-squared
+
+&lt;img src="img/r2_bias.png" width="370px" /&gt;&lt;img src="img/r2_cover.png" width="370px" /&gt;
+
+---
+
+## Summary (so far)
+
+Results:
+
+* ANOVA-based estimator requires correction 
+
+--
+
+* `\(R^2\)`-based estimator does not 
+
+--
+
+* valid confidence intervals for true importance
+
+--
+
+Questions:
+
+* is `\(R^2\)` phenomenon more general?
+
+--
+
+* hypothesis testing?
+
+---
+
+## General population variable importance
+
+\(
+\DeclareMathOperator*{\argmax}{arg\,max}
+\)
+
+Consider function classes `\(\mathcal{F}_s \subseteq \mathcal{F}\)`
+
+Statistical framework for variable importance:
+
+--
+
+* `\(V(f, P)\)`: .blue1[predictiveness] of `\(f \in \mathcal{F}\)` under distribution `\(P\)` 
+
+--
+
+* `\(f_0 := \argmax_{f \in \mathcal{F}} V(f, P_0)\)`: _oracle prediction function_ in `\(\mathcal{F}\)` 
+
+--
+
+* `\(f_{0,s} := \argmax_{f \in \mathcal{F}_s} V(f, P_0)\)`: oracle in `\(\mathcal{F}_s\)`
+
+--
+
+`\(V(f_0, P_0)\)`: _oracle predictiveness_
+
+--
+
+`\(V(f_{0,s}, P_0)\)`: _residual oracle predictiveness_
+
+--
+
+.green[Variable importance]: `\(\psi_{0,s} := V(f_0, P_0) - V(f_{0,s}, P_0)\)`
+
+---
+
+## Example measures
+
+`\(R^2\)`: `\(V(f, P) = 1 - E_P\{Y - f(X)\}^2 / var_P(Y)\)`
+
+--
+
+Classification accuracy: `\(V(f, P) = P\{Y = f(X)\}\)`
+
+--
+
+AUC: `\(V(f, P) = P\{f(X_1) &lt; f(X_2) \mid Y_1 = 0, Y_2 = 1\}\)`
+
+--
+
+Pseudo-$R^2$: `\(V(f, P) = 1 - \frac{E_P[Y\log f(X) - (1-Y)\log\{1-f(X)\}]}{P(Y=1)\log P(Y=1) + \{1-P(Y=1)\}\log\{1-P(Y=1)\}}\)`
+
+---
+
+## Plug-in estimators of variable importance
+
+Simple estimator:
+
+--
+
+* obtain estimator `\(f_n\)` of `\(f_0\)` (e.g., using machine learning)
+
+--
+
+* obtain estimator `\(f_{n,s}\)` of `\(f_{0,s}\)` 
+
+--
+
+* plug in: `\(\psi_{n,s} := V(f_n, P_n) - V(f_{n,s}, P_n)\)`
+
+---
+
+## Plug-in estimators of variable importance
+
+`\(\psi_{0,s} = V(f_0, P_0) - V(f_{0,s}, P_0)\)`
+
+`\(\psi_{n,s} = V(f_n, P_n) - V(f_{n,s}, P_n)\)`
+
+Questions:
+
+* when is `\(\psi_{n,s}\)` .blue1[regular] and .blue2[asymptotically linear]?
+
+--
+
+** implies nice asymptotic distribution
+** analytic formula for variance
+
+--
+
+* can we test `\(H_0: \psi_{0,s} = 0\)`?
+
+---
+
+## Large-sample behavior of `\(\psi_{n,s}\)`
+
+Under regularity conditions, `$$\sqrt{n}(\psi_{n,s} - \psi_{0,s}) \to_d N(0, \tau^2_{0,s})$$`
+
+--
+
+* `\(\tau^2_{0,s}\)` based on EIF `\(\varphi_{0,s}(z)\)`
+** `\(\varphi_{0,s}(z)\)` depends on chosen measure
+* `\(\psi_{n,s}\)` .blue1[efficient]
+
+---
+
+## Estimation
+
+Plug-in estimator: guaranteed to be `\(&gt; 0\)`
+
+--
+
+.red[Poor empirical performance] for truly small importance when machine learning is used
+
+--
+
+We propose a .green[cross-fit estimator] instead
+
+---
+
+## Hypothesis testing
+
+Under `\(H_0: \psi_{0,s} = 0\)`, `\(\varphi_{0,s}(z) = 0\)` 
+
+--
+
+Similar phenomenon occurs in linear regression:
+* use `\(\chi^2\)` instead of Normal distribution
+
+--
+
+Procedure: test difference after sample splitting
+
+---
+
+## Overall procedure
+
+![](img/samplesplit2.pdf)
+
+---
+
+## Experiment: binary outcome, bivariate feature vector
+
+`\(Y \sim Bern(0.6)\)`; `\(X_1 \mid Y \sim N(\mu_1, \Sigma)\)`
+
+Under `\(H_0\)`, `\(X_2 \mid Y \sim N(0, \Sigma)\)`
+
+Under `\(H_1\)`, `\(X_2 \mid Y \sim N(\mu_2, \Sigma)\)`
+
+Investigate:
+* scaled empirical mean squared error
+* empirical coverage of nominal 95% CIs
+* empirical type I error (or power)
+
+Estimate using cross-fitting and regression stacking
+
+---
+
+## Experiment: results under `\(H_1\)`
+
+&lt;img src="img/bivariate_loss_performance_accuracy_auc_cv_1.png" width="400px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Experiment: results under `\(H_0\)`
+
+&lt;img src="img/bivariate_null_performance_accuracy_auc_cv_1.png" width="400px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Studying an antibody against HIV-1 infection
+
+&lt;img src="img/amp.png" width="300px" style="display: block; margin: auto;" /&gt;
+
+* 611 HIV-1 pseudoviruses
+* Outcome: neutralization sensitivity to antibody
+* 800 individual features, 13 groups of interest
+* Estimate using cross-fitting and regression stacking
+
+---
+
+## Studying an antibody against HIV-1 infection
+
+&lt;img src="img/vim_ic50.censored_pres_r2_conditional_simple.png" width="5249" height="460px" /&gt;
+
+---
+
+## Studying an antibody against HIV-1 infection
+
+&lt;img src="img/vim_ic50.censored_pres_r2_acc_auc_conditional_simple.png" width="5249" height="460px" /&gt;
+
+---
+
+## Conclusions
+
+.pull-left[
+Check out the papers: 
+
+* [R-squared-based importance](https://doi.org/10.1111/biom.13392) (Williamson et al., [_Biometrics_, 2020])
+* [General variable importance measures](https://arxiv.org/abs/2004.03683) (Williamson et al., [_arXiv_, 2020])
+* [Shapley-based importance](https://arxiv.org/abs/2006.09481) (Williamson and Feng, [_ICML_, 2020])
+]
+
+.pull-right[
+Check out the software:
+
+* [R package `vimp`](https://github.com/bdwilliamson/vimp)
+* [Python package `vimpy`](https://github.com/bdwilliamson/vimpy)
+]
+
+<i class="fab  fa-github "></i> https://github.com/bdwilliamson
+<i class="fas  fa-globe "></i> https://bdwilliamson.github.io
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow-night-blue",
+"highlightLanguage": "rmarkdown",
+"highlightLines": false,
+"slideNumberFormat": "%current%",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
