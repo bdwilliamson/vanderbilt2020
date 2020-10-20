@@ -68,11 +68,11 @@ In general: data $Z_1, \ldots, Z_n \stackrel{iid}{\sim} P_0$
 
 --
 
-* $X_i \in \mathbb{R}^p$ is a vector of covariates
+* $X_i \in \mathbb{R}^p$ is a vector of covariates;
 
 --
 
-* $Y_i \in \mathbb{R}$ is the outcome of interest
+* $Y_i \in \mathbb{R}$ is the outcome of interest;
 
 --
 
@@ -178,7 +178,7 @@ Our focus: .blue1[statistical inference] on .blue2[interpretable] intrinsic meas
 
 ## Intrinsic importance
 
-What if we knew .blue2[$P_0$]?
+What if we knew $\color{blue}{P_0}$ ?
 
 --
 
@@ -234,7 +234,7 @@ $$\text{ANOVA}_{n,s} := \ \frac{\frac{1}{n}\sum_{i=1}^n \{\mu_n(X_i) - \mu_{n,s}
 
 Explicit form:
 
-$$\text{ANOVA}_{n,s} = \left[1 - \frac{\frac{1}{n}\sum_{i=1}^n \{Y_i - \mu_n(X_i)\}^2}{\sigma^2_n}\right] - \left[1 - \frac{\frac{1}{n}\sum_{i=1}^n \{Y_i - \mu_{n,s}(X_i)\}^2}{\sigma^2_n}\right]$$
+$$\left[1 - \frac{\frac{1}{n}\sum_{i=1}^n \{Y_i - \mu_n(X_i)\}^2}{\sigma^2_n}\right] - \left[1 - \frac{\frac{1}{n}\sum_{i=1}^n \{Y_i - \mu_{n,s}(X_i)\}^2}{\sigma^2_n}\right]$$
 
 --
 
@@ -246,7 +246,11 @@ Corrected estimator: .blue1[difference in R-squared]!
 
 $MSE(\mu, P_0) := E_{P_0}\{Y - \mu(X)\}^2$
 
+--
+
 $R^2(\mu, P_0) := 1 - \frac{MSE(\mu, P_0)}{var_{P_0}(Y)}$
+
+--
 
 $DR^2_{0,s} := R^2(\mu_0, P_0) - R^2(\mu_{0,s}, P_0)$
 
@@ -306,10 +310,6 @@ Questions:
 
 ## General population variable importance
 
-\(
-\DeclareMathOperator*{\argmax}{arg\,max}
-\)
-
 Consider function classes $\mathcal{F}_{-s} \subseteq \mathcal{F}$
 
 Statistical framework for variable importance:
@@ -320,11 +320,11 @@ Statistical framework for variable importance:
 
 --
 
-* $f_0 := \argmax_{f \in \mathcal{F}} V(f, P_0)$: _oracle prediction function_ in $\mathcal{F}$ 
+* $f_0 := \underset{f \in \mathcal{F}}{\text{arg}\,\text{max}}\, V(f, P_0)$: _oracle prediction function_ in $\mathcal{F}$ 
 
 --
 
-* $f_{0,-s} := \argmax_{f \in \mathcal{F}_{-s}} V(f, P_0)$: oracle in $\mathcal{F}_{-s}$
+* $f_{0,-s} := \underset{f \in \mathcal{F}_{-s}}{\text{arg}\,\text{max}}\, V(f, P_0)$: oracle in $\mathcal{F}_{-s}$
 
 --
 
@@ -336,25 +336,23 @@ $V(f_{0,-s}, P_0)$: _residual oracle predictiveness_
 
 --
 
-.green[Variable importance]: $\psi_{0,s} := V(f_0, P_0) - V(f_{0,-s}, P_0)$
+.blue2[Variable importance]: $\psi_{0,s} := V(f_0, P_0) - V(f_{0,-s}, P_0)$
 
 ---
 
 ## Example measures
 
-$R^2$: $V(f, P) = 1 - E_P\{Y - f(X)\}^2 / var_P(Y)$
+$R^2$ : $V(f, P) = 1 - E_P\{Y - f(X)\}^2 / var_P(Y)$
 
 --
 
 Classification accuracy: $V(f, P) = P\{Y = f(X)\}$
 
---
-
 AUC: $V(f, P) = P\{f(X_1) < f(X_2) \mid Y_1 = 0, Y_2 = 1\}$
 
 --
 
-Pseudo-$R^2$: $V(f, P) = 1 - \frac{E_P[Y\log f(X) - (1-Y)\log\{1-f(X)\}]}{P(Y=1)\log P(Y=1) + \{1-P(Y=1)\}\log\{1-P(Y=1)\}}$
+Pseudo- $R^2$ : $1 - \frac{E_P[Y \log f(X) - (1 - Y)\log \{1 - f(X)\}]}{P(Y = 1)\log P(Y = 1) + P(Y = 0)\log P(Y = 0)}$ 
 
 ---
 
@@ -388,8 +386,8 @@ Questions:
 
 --
 
-** implies nice asymptotic distribution
-** analytic formula for variance
+  * implies nice asymptotic distribution
+  * analytic formula for variance
 
 --
 
@@ -397,14 +395,14 @@ Questions:
 
 ---
 
-## Large-sample behavior of $\psi_{n,s}$
+## Large-sample behavior
 
 Under regularity conditions, $$\sqrt{n}(\psi_{n,s} - \psi_{0,s}) \to_d N(0, \tau^2_{0,s})$$
 
 --
 
 * $\tau^2_{0,s}$ based on EIF $\varphi_{0,s}(z)$
-** $\varphi_{0,s}(z)$ depends on chosen measure
+  * $\varphi_{0,s}(z)$ depends on chosen measure
 * $\psi_{n,s}$ .blue1[efficient]
 
 ---
@@ -425,14 +423,11 @@ We propose a .green[cross-fit estimator] instead
 
 ## Hypothesis testing
 
-Under $H_0: \psi_{0,s} = 0$, $\varphi_{0,s}(z) = 0$ 
+Under $H_0: \psi_{0,s} = 0$, $\varphi_{0,s}(z) = 0$
 
 --
 
-Similar phenomenon occurs in linear regression:
-* use $\chi^2$ instead of Normal distribution
-
---
+Similar phenomenon occurs in linear regression: use $\chi^2$ 
 
 Procedure: test difference after sample splitting
 
@@ -440,7 +435,9 @@ Procedure: test difference after sample splitting
 
 ## Overall procedure
 
-![](img/samplesplit2.pdf)
+```{r samplesplit, echo = FALSE, out.width = "720px", fig.align = "center"}
+knitr::include_graphics("img/samplesplit.png")
+```
 
 ---
 
@@ -463,7 +460,7 @@ Estimate using cross-fitting and regression stacking
 
 ## Experiment: results under $H_1$
 
-```{r generalvim-h1, echo = FALSE, out.width = "400px", fig.align = "center"}
+```{r generalvim-h1, echo = FALSE, out.width = "640px", fig.align = "center"}
 knitr::include_graphics("img/bivariate_loss_performance_accuracy_auc_cv_1.png")
 ```
 
@@ -471,7 +468,7 @@ knitr::include_graphics("img/bivariate_loss_performance_accuracy_auc_cv_1.png")
 
 ## Experiment: results under $H_0$
 
-```{r generalvim-h0, echo = FALSE, out.width = "400px", fig.align = "center"}
+```{r generalvim-h0, echo = FALSE, out.width = "640px", fig.align = "center"}
 knitr::include_graphics("img/bivariate_null_performance_accuracy_auc_cv_1.png")
 ```
 
@@ -512,6 +509,8 @@ Simple estimators of importance are
 * .blue1[unbiased] and
 * .blue2[efficient]
 
+--
+
 even if machine learning techniques are used.
 
 --
@@ -526,9 +525,7 @@ $V(f_0, P_0) - V(f_{0,s}, P_0)$: importance of $X_s$ relative to $X$
 
 --
 
-.red[Potential issue]: correlated features
-
---
+$\color{red}{\text{Potential issue}}$: correlated features
 
 Example: two perfectly correlated features, $X_1$ and $X_2$
 
@@ -546,7 +543,7 @@ Is there another useful definition of importance?
 
 ---
 
-## Shapley population variable importance
+## Shapley population variable importance (SPVIM)
 
 ```{r spvim-example, echo = FALSE, out.width = "720px", fig.align = "center"}
 knitr::include_graphics("img/spvim_example.png")
@@ -780,7 +777,7 @@ Two interpretations:
 
 ## Acknowledgments
 
-Collaborators: Marco Carone, Jean Feng, Peter Gilbert, Noah Simon
+Collaborators: Marco Carone, Noah Simon, Jean Feng, Peter Gilbert
 
 Funding: NIH F31 AI140836
 
