@@ -3,8 +3,7 @@
   <head>
     <title>A unified approach to inference on algorithm-agnostic variable importance</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Brian D. Williamson, PhD   Fred Hutchinson Cancer Research Center " />
-    <script src="index_files/header-attrs-2.4/header-attrs.js"></script>
+    <meta name="author" content="Brian D. Williamson, PhD   Fred Hutchinson Cancer Research Center" />
     <link href="index_files/tile-view-0.2.3.9000/tile-view.css" rel="stylesheet" />
     <script src="index_files/tile-view-0.2.3.9000/tile-view.js"></script>
     <link href="index_files/font-awesome-5.3.1/css/fontawesome-all.min.css" rel="stylesheet" />
@@ -31,7 +30,7 @@ class: center, middle, title-slide
 
 ## Motivation
 
-&lt;img src="img/examples.png" width="1405" height="450px" style="display: block; margin: auto;" /&gt;
+&lt;img src="img/examples.png" height="450px" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -77,7 +76,7 @@ How do we typically do this in linear regression?
 
 --
 
-* Fit a linear regression of `\(Y\)` on `\(X_{-s}\)` `\(\rightarrow \color{cyan}{\hat{\mu}_s(X)}\)` 
+* Fit a linear regression of `\(Y\)` on `\(X_{-s}\)` `\(\rightarrow \color{cyan}{\hat{\mu}_s(X)}\)`
 
 --
 
@@ -87,11 +86,11 @@ How do we typically do this in linear regression?
 
 Many ways to compare fitted values, including:
 * ANOVA decomposition
-* Difference in `\(R^2\)` 
+* Difference in `\(R^2\)`
 
 ---
 
-## Linear regression variable importance 
+## Linear regression variable importance
 
 Difference in `\(R^2\)`: `$$\left[1 - \frac{MSE(\hat{\mu})}{n^{-1}\sum_{i=1}^n\{Y_i - \overline{Y}_n\}^2}\right] - \left[1 - \frac{MSE(\hat{\mu}_s)}{n^{-1}\sum_{i=1}^n\{Y_i - \overline{Y}_n\}^2}\right]$$`
 
@@ -99,7 +98,7 @@ Mean squared error (MSE) of a linear regression function `\(f\)`: `$$MSE(f) = \ 
 
 Inference:
 
-* Test difference 
+* Test difference
 
 --
 
@@ -185,7 +184,7 @@ Idea:
 
 --
 
-* `\(\sigma^2_n \leftarrow\)` empirical variance of `\(Y\)` 
+* `\(\sigma^2_n \leftarrow\)` empirical variance of `\(Y\)`
 
 --
 
@@ -193,13 +192,13 @@ Idea:
 
 --
 
-This estimator .red[requires correction]! 
+This estimator .red[requires correction]!
 
 ---
 
 ## Population ANOVA: corrected estimator
 
-Debiasing: use the efficient influence function (EIF) `\(\phi_{0,s}\)` 
+Debiasing: use the efficient influence function (EIF) `\(\phi_{0,s}\)`
 
 `$$\text{ANOVA}_{n,s} := \ \frac{\frac{1}{n}\sum_{i=1}^n \{\mu_n(X_i) - \mu_{n,s}(X_i)\}^2}{\sigma^2_n} + \frac{1}{n}\sum_{i=1}^n \phi_{0,s}(X_i)$$`
 
@@ -253,11 +252,11 @@ Simple estimator does not require correction
 
 Results:
 
-* ANOVA-based estimator requires correction 
+* ANOVA-based estimator requires correction
 
 --
 
-* `\(R^2\)`-based estimator does not 
+* `\(R^2\)`-based estimator does not
 
 --
 
@@ -283,11 +282,11 @@ Statistical framework for variable importance:
 
 --
 
-* `\(V(f, P)\)`: .blue1[predictiveness] of `\(f \in \mathcal{F}\)` under distribution `\(P\)` 
+* `\(V(f, P)\)`: .blue1[predictiveness] of `\(f \in \mathcal{F}\)` under distribution `\(P\)`
 
 --
 
-* `\(f_0 := \underset{f \in \mathcal{F}}{\text{arg}\,\text{max}}\, V(f, P_0)\)`: _oracle prediction function_ in `\(\mathcal{F}\)` 
+* `\(f_0 := \underset{f \in \mathcal{F}}{\text{arg}\,\text{max}}\, V(f, P_0)\)`: _oracle prediction function_ in `\(\mathcal{F}\)`
 
 --
 
@@ -319,7 +318,7 @@ AUC: `\(V(f, P) = P\{f(X_1) &lt; f(X_2) \mid Y_1 = 0, Y_2 = 1\}\)`
 
 --
 
-Pseudo- `\(R^2\)` : `\(1 - \frac{E_P[Y \log f(X) - (1 - Y)\log \{1 - f(X)\}]}{P(Y = 1)\log P(Y = 1) + P(Y = 0)\log P(Y = 0)}\)` 
+Pseudo- `\(R^2\)` : `\(1 - \frac{E_P[Y \log f(X) - (1 - Y)\log \{1 - f(X)\}]}{P(Y = 1)\log P(Y = 1) + P(Y = 0)\log P(Y = 0)}\)`
 
 ---
 
@@ -333,7 +332,7 @@ Simple estimator:
 
 --
 
-* obtain estimator `\(f_{n,s}\)` of `\(f_{0,s}\)` 
+* obtain estimator `\(f_{n,s}\)` of `\(f_{0,s}\)`
 
 --
 
@@ -394,7 +393,7 @@ Under `\(H_0: \psi_{0,s} = 0\)`, `\(\varphi_{0,s}(z) = 0\)`
 
 --
 
-Similar phenomenon occurs in linear regression: use `\(\chi^2\)` 
+Similar phenomenon occurs in linear regression: use `\(\chi^2\)`
 
 Procedure: test difference after sample splitting
 
@@ -448,13 +447,13 @@ Estimate using cross-fitting and regression stacking
 
 ## Predicting neutralization sensitivity
 
-&lt;img src="img/vim_ic50.censored_pres_r2_conditional_simple.png" width="5249" height="480px" /&gt;
+&lt;img src="img/vim_ic50.censored_pres_r2_conditional_simple.png" height="480px" /&gt;
 
 ---
 
 ## Predicting neutralization sensitivity
 
-&lt;img src="img/vim_ic50.censored_pres_r2_acc_auc_conditional_simple.png" width="5249" height="480px" /&gt;
+&lt;img src="img/vim_ic50.censored_pres_r2_acc_auc_conditional_simple.png" height="480px" /&gt;
 
 ---
 
@@ -508,7 +507,7 @@ Idea: average contribution over subsets
 
 ## SPVIM
 
-The SPVIM for variable `\(X_j\)` is 
+The SPVIM for variable `\(X_j\)` is
 
 &lt;img src="img/spvim_def_1.png" width="720px" style="display: block; margin: auto;" /&gt;
 
@@ -516,7 +515,7 @@ The SPVIM for variable `\(X_j\)` is
 
 ## SPVIM
 
-The SPVIM for variable `\(X_j\)` is 
+The SPVIM for variable `\(X_j\)` is
 
 &lt;img src="img/spvim_def_2.png" width="720px" style="display: block; margin: auto;" /&gt;
 
@@ -524,7 +523,7 @@ The SPVIM for variable `\(X_j\)` is
 
 ## SPVIM
 
-The SPVIM for variable `\(X_j\)` is 
+The SPVIM for variable `\(X_j\)` is
 
 &lt;img src="img/spvim_def_3.png" width="720px" style="display: block; margin: auto;" /&gt;
 
@@ -651,9 +650,9 @@ Under regularity conditions, `$$\sqrt{n}(\psi_{m,n} - \psi_{0,0}) \to_d N(0, \Si
 
 ## Investigating performance
 
-`\(X_1, \ldots, X_200 \sim N_{200}(0, \Sigma)\)`, where `\(\Sigma\)` is the identity matrix except:
+`\(X_1, \ldots, X_{200} \sim N_{200}(0, \Sigma)\)`, where `\(\Sigma\)` is the identity matrix except:
 * `\(\Sigma_{1,11} = \Sigma_{11,1} = 0.7\)`
-* `\(\Sigma_{3,12} = \Sigma{3,13} = \Sigma{12,3} = \Sigma_{13,3} = 0.3\)`
+* `\(\Sigma_{3,12} = \Sigma_{3,13} = \Sigma_{12,3} = \Sigma_{13,3} = 0.3\)`
 * `\(\Sigma_{5,14} = \Sigma_{14,5} = 0.05\)`
 
 `\(Y \mid X = x \sim N(\sum_{j \in \{1, 3, 5\}}f_j(x_j), 1)\)`
@@ -699,7 +698,7 @@ Collaborators: Marco Carone, Noah Simon, Jean Feng, Peter Gilbert
 Funding: NIH F31 AI140836
 
 .pull-left[
-Check out the papers: 
+Check out the papers:
 
 * [R-squared-based importance](https://doi.org/10.1111/biom.13392) (Williamson et al., [_Biometrics_, 2020])
 * [General variable importance measures](https://arxiv.org/abs/2004.03683) (Williamson et al., [_arXiv_, 2020])
